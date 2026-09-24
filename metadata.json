@@ -1,0 +1,7 @@
+{
+  "name": "Eren - Haftalık Takip & Planlayıcı",
+  "description": "Eren için özel tasarlanmış haftalık gelişim, görev ve hedef yönetim sistemi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
