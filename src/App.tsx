@@ -14,6 +14,7 @@ import { WeekModal } from './components/WeekModal';
 import { ProfileModal } from './components/ProfileModal';
 import { AdminPasswordModal, ADMIN_PASSWORD } from './components/AdminPasswordModal';
 import { AdminPanelModal } from './components/AdminPanelModal';
+import { MouseFollower } from './components/MouseFollower';
 import { subscribeToRoadmap, loadRoadmapFromFirestore, saveRoadmapToFirestore } from './utils/firebaseSync';
 
 const STORAGE_KEY_WEEKS = 'eren_roadmap_weeks_v4';
@@ -34,7 +35,7 @@ export default function App() {
     } catch (e) {
       console.error('Error reading theme', e);
     }
-    return 'light';
+    return 'dark';
   });
 
   // Admin authentication state
@@ -503,6 +504,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans antialiased transition-colors duration-200">
+      <MouseFollower />
       {/* Left Sidebar with all weeks (1. Hafta, 2. Hafta, ...) */}
       <Sidebar
         weeks={weeks}

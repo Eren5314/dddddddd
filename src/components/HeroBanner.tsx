@@ -28,7 +28,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const totalHours = (totalMinutes / 60).toFixed(1);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.03)] mb-6 transition-all">
+    <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.03)] mb-6 transition-all animate-fade-in">
       {/* Background modern ambient glow with blue hue */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-gradient-to-br from-blue-100/60 to-indigo-100/30 dark:from-blue-900/20 dark:to-indigo-900/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 -mb-20 w-80 h-80 bg-slate-100/70 dark:bg-slate-800/40 rounded-full blur-3xl pointer-events-none" />
