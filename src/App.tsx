@@ -738,7 +738,9 @@ export default function App() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         user={user}
-        onSave={(data) => setUser((prev) => ({ ...prev, ...data }))}
+        onSave={(data) => {
+          requireAdmin(() => setUser((prev) => ({ ...prev, ...data })));
+        }}
       />
     </div>
   );
