@@ -119,12 +119,14 @@ export default function App() {
     }
   };
 
-  const handleLogoutAdmin = () => {
-    setIsAdmin(false);
-    try {
-      localStorage.removeItem(STORAGE_KEY_ADMIN);
-    } catch (e) {
-      console.error(e);
+  const handleLogout = () => {
+    if (window.confirm('Yöneticilikten çıkmak istediğinize emin misiniz?')) {
+      setIsAdmin(false);
+      try {
+        localStorage.removeItem(STORAGE_KEY_ADMIN);
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
@@ -573,6 +575,7 @@ export default function App() {
           onOpenAdminPanel={handleOpenAdminPanel}
           theme={theme}
           onToggleTheme={toggleTheme}
+          onLogout={handleLogout}
         />
 
         {/* Main Body */}
@@ -705,7 +708,7 @@ export default function App() {
         onQuickAddTaskToWeek={(weekId, taskTitle) => handleQuickAddTask(taskTitle, weekId)}
         theme={theme}
         onToggleTheme={toggleTheme}
-        onLogoutAdmin={handleLogoutAdmin}
+        onLogout={handleLogout}
       />
 
       {/* Other Modals */}

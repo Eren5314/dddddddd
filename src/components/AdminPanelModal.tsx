@@ -29,7 +29,7 @@ interface AdminPanelModalProps {
   onQuickAddTaskToWeek: (weekId: string, title: string) => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
-  onLogoutAdmin: () => void;
+  onLogout: () => void;
 }
 
 export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
@@ -42,7 +42,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
   onQuickAddTaskToWeek,
   theme,
   onToggleTheme,
-  onLogoutAdmin,
+  onLogout,
 }) => {
   const [activeTab, setActiveTab] = useState<'links' | 'tasks' | 'settings'>('links');
   const [selectedWeekId, setSelectedWeekId] = useState<string>(weeks[0]?.id || '');
@@ -595,7 +595,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                 <div className="pt-2">
                   <button
                     onClick={() => {
-                      onLogoutAdmin();
+                      onLogout();
                       onClose();
                     }}
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/70 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900 rounded-xl text-xs font-bold transition-colors cursor-pointer"

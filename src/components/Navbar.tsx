@@ -15,6 +15,7 @@ interface NavbarProps {
   onOpenAdminPanel: () => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
+  onLogout: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -29,6 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAdminPanel,
   theme,
   onToggleTheme,
+  onLogout,
 }) => {
   const tabs = [
     { id: 'tasks', label: 'Görevler & Plan', icon: CheckSquare },
@@ -134,6 +136,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               )}
             </button>
+
+            {isAdmin && (
+              <button
+                onClick={onLogout}
+                className="px-3 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer border bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/50"
+              >
+                Çıkış Yap
+              </button>
+            )}
 
             {/* Quick Action Button */}
             <button
