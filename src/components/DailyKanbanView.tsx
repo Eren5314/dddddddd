@@ -20,12 +20,12 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
   return (
     <div className="space-y-5">
       {/* Header Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
             {week.weekNumber}. Hafta Günlük Dağılımı
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Haftanın 7 gününe yayılan plan ve görevlerin günlük akış panosu.
           </p>
         </div>
@@ -40,21 +40,21 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
           return (
             <div
               key={day}
-              className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col min-h-[220px] shadow-2xs"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col min-h-[220px] shadow-2xs transition-colors"
             >
               {/* Day Header */}
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-150 dark:border-slate-800">
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">
                     {day}
                   </h3>
-                  <div className="text-[11px] text-slate-500 font-mono tabular-nums">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono tabular-nums">
                     {completedDayCount}/{dayTasks.length} Görev
                   </div>
                 </div>
                 <button
                   onClick={() => onAddTaskForDay(day)}
-                  className="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-md transition-colors cursor-pointer"
+                  className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-md transition-colors cursor-pointer"
                   title={`${day} gününe görev ekle`}
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -64,7 +64,7 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
               {/* Tasks in this day */}
               <div className="space-y-2 flex-1">
                 {dayTasks.length === 0 ? (
-                  <div className="h-full flex items-center justify-center text-center p-3 text-[11px] text-slate-400">
+                  <div className="h-full flex items-center justify-center text-center p-3 text-[11px] text-slate-400 dark:text-slate-500">
                     Planlanan görev yok
                   </div>
                 ) : (
@@ -74,8 +74,8 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
                       onClick={() => onEditTask(task)}
                       className={`p-2.5 rounded-lg border text-left cursor-pointer transition-all ${
                         task.completed
-                          ? 'bg-slate-50 border-slate-200 text-slate-400 line-through'
-                          : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-2xs'
+                          ? 'bg-slate-50 dark:bg-slate-850/60 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 line-through'
+                          : 'bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-2xs'
                       }`}
                     >
                       <div className="flex items-start gap-2">
@@ -88,7 +88,7 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
                           className={`mt-0.5 w-4 h-4 rounded flex items-center justify-center border transition-colors shrink-0 ${
                             task.completed
                               ? 'bg-emerald-600 border-emerald-600 text-white'
-                              : 'border-slate-300 hover:border-blue-500'
+                              : 'border-slate-300 dark:border-slate-600 hover:border-blue-500 bg-white dark:bg-slate-700'
                           }`}
                         >
                           {task.completed && <Check className="w-3 h-3 stroke-[3]" />}
@@ -98,11 +98,11 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5 mt-2 text-[10px] text-slate-500">
+                      <div className="flex items-center gap-1.5 mt-2 text-[10px] text-slate-500 dark:text-slate-400">
                         <span>{task.category}</span>
                         {task.timeEstimateMinutes && (
                           <>
-                            <span aria-hidden="true">·</span>
+                            <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
                             <span className="font-mono tabular-nums">{task.timeEstimateMinutes} dk</span>
                           </>
                         )}
@@ -115,7 +115,7 @@ export const DailyKanbanView: React.FC<DailyKanbanViewProps> = ({
               {/* Bottom Quick Button */}
               <button
                 onClick={() => onAddTaskForDay(day)}
-                className="mt-3 w-full py-1 text-center text-[11px] font-semibold text-slate-600 hover:text-blue-700 hover:bg-blue-50/80 rounded transition-colors cursor-pointer"
+                className="mt-3 w-full py-1 text-center text-[11px] font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50/80 dark:hover:bg-blue-950/40 rounded transition-colors cursor-pointer"
               >
                 + Görev Ekle
               </button>

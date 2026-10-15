@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Plus, Calendar, CheckSquare, Clock, BookOpen, BarChart3, Settings } from 'lucide-react';
+import { Menu, Plus, Calendar, CheckSquare, Clock, BookOpen, BarChart3, Settings, Shield, ShieldCheck, Sun, Moon } from 'lucide-react';
 import { WeekData } from '../types';
 import { LiveClock } from './LiveClock';
 
@@ -11,6 +11,10 @@ interface NavbarProps {
   onOpenSettings: () => void;
   currentWeek: WeekData | null;
   userName: string;
+  isAdmin: boolean;
+  onOpenAdminPanel: () => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,6 +25,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSettings,
   currentWeek,
   userName,
+  isAdmin,
+  onOpenAdminPanel,
+  theme,
+  onToggleTheme,
 }) => {
   const tabs = [
     { id: 'tasks', label: 'Görevler & Plan', icon: CheckSquare },
@@ -31,14 +39,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+    <header className="sticky top-0 z-30 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
           {/* Left: Mobile Toggle & Breadcrumb */}
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={onToggleMobileSidebar}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
+              className="lg:hidden p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
               title="Haftaları Göster"
             >
               <Menu className="w-5 h-5" />
@@ -46,28 +54,28 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Breadcrumb Trail */}
             <div className="flex items-center gap-2 text-xs sm:text-sm min-w-0">
-              <span className="font-extrabold text-slate-900 tracking-tight shrink-0 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
+              <span className="font-extrabold text-slate-900 dark:text-slate-100 tracking-tight shrink-0 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" />
                 {userName}
               </span>
-              <span aria-hidden="true" className="text-slate-300 font-normal">/</span>
+              <span aria-hidden="true" className="text-slate-300 dark:text-slate-700 font-normal">/</span>
               {currentWeek ? (
                 <div className="flex items-center gap-2 truncate">
-                  <span className="inline-flex items-center font-bold text-blue-900 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md text-xs font-mono">
+                  <span className="inline-flex items-center font-bold text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-md text-xs font-mono">
                     {currentWeek.weekNumber}. Hafta
                   </span>
-                  <span className="text-slate-600 font-medium truncate hidden md:inline text-xs">
+                  <span className="text-slate-600 dark:text-slate-400 font-medium truncate hidden md:inline text-xs">
                     {currentWeek.title}
                   </span>
                 </div>
               ) : (
-                <span className="text-slate-500 text-xs">Genel Bakış</span>
+                <span className="text-slate-500 dark:text-slate-400 text-xs">Genel Bakış</span>
               )}
             </div>
           </div>
 
           {/* Center: Modern Floating Pill Navigation */}
-          <nav className="hidden xl:flex items-center p-1 bg-slate-100/80 border border-slate-200/80 rounded-xl">
+          <nav className="hidden xl:flex items-center p-1 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-xl">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -77,23 +85,58 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-white text-blue-950 shadow-xs ring-1 ring-slate-900/5'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                      ? 'bg-white dark:bg-slate-900 text-blue-950 dark:text-blue-300 shadow-xs ring-1 ring-slate-900/5 dark:ring-white/10'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-white/50 dark:hover:bg-slate-700/50'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          {/* Right: Live Clock & Actions */}
+          {/* Right: Actions, Theme & Admin */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {/* Live Clock Component */}
             <LiveClock />
 
-            {/* Quick Action Button with vibrant modern blue */}
+            {/* Theme Toggle (Light / Dark) */}
+            <button
+              onClick={onToggleTheme}
+              className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-xl transition-all duration-150 cursor-pointer"
+              title={theme === 'dark' ? 'Açık Temaya Geç (Gündüz Modu)' : 'Koyu Temaya Geç (Gece Modu)'}
+              aria-label="Temayı Değiştir"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400 transition-transform hover:rotate-45" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-600 transition-transform hover:-rotate-12" />
+              )}
+            </button>
+
+            {/* Admin Panel Button */}
+            <button
+              onClick={onOpenAdminPanel}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer border ${
+                isAdmin
+                  ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 shadow-2xs hover:bg-emerald-100 dark:hover:bg-emerald-900/50'
+                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+              }`}
+              title="Admin Paneli (Şifre: Eren9852)"
+            >
+              {isAdmin ? (
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              ) : (
+                <Shield className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+              )}
+              <span className="hidden md:inline">Admin Paneli</span>
+              {isAdmin && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              )}
+            </button>
+
+            {/* Quick Action Button */}
             <button
               onClick={onAddTask}
               className="group relative inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-white bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 hover:brightness-105 active:scale-98 rounded-xl transition-all duration-150 cursor-pointer shadow-xs whitespace-nowrap border border-blue-600/90 shadow-blue-500/20"
@@ -105,7 +148,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Settings */}
             <button
               onClick={onOpenSettings}
-              className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 rounded-xl transition-all duration-150 cursor-pointer"
+              className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-xl transition-all duration-150 cursor-pointer"
               title="Profil & Hedef Ayarları"
             >
               <Settings className="w-4 h-4" />
@@ -114,7 +157,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Mobile / Tablet Horizontal Tab Scrollbar */}
-        <div className="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-100 -mx-4 px-4 scrollbar-none">
+        <div className="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-100 dark:border-slate-800 -mx-4 px-4 scrollbar-none">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -124,8 +167,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
                   isActive
-                    ? 'bg-blue-50 text-blue-900 font-bold border border-blue-200 shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 bg-slate-50'
+                    ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800 shadow-2xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-50 dark:bg-slate-800/60'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />

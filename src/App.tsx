@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { WeekData, Task, UserProfile, DayOfWeek, WeekStatus } from './types';
+import { WeekData, Task, UserProfile, DayOfWeek, WeekStatus, Resource } from './types';
 import { initialWeeks, initialUserProfile } from './data/initialData';
 import { Sidebar } from './components/Sidebar';
 import { Navbar } from './components/Navbar';
@@ -12,12 +12,120 @@ import { ProgressStats } from './components/ProgressStats';
 import { TaskModal } from './components/TaskModal';
 import { WeekModal } from './components/WeekModal';
 import { ProfileModal } from './components/ProfileModal';
+import { AdminPasswordModal, ADMIN_PASSWORD } from './components/AdminPasswordModal';
+import { AdminPanelModal } from './components/AdminPanelModal';
 
 const STORAGE_KEY_WEEKS = 'eren_roadmap_weeks_v4';
 const STORAGE_KEY_USER = 'eren_roadmap_user_v4';
 const STORAGE_KEY_SELECTED_WEEK = 'eren_roadmap_active_week_id_v4';
+const STORAGE_KEY_THEME = 'eren_roadmap_theme_v1';
+const STORAGE_KEY_ADMIN = 'eren_roadmap_admin_auth_v1';
 
 export default function App() {
+  // Theme state: light or dark
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+      if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch (e) {
+      console.error('Error reading theme', e);
+    }
+    return 'light';
+  });
+
+  // Admin authentication state
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY_ADMIN) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Admin Password Verification Modal state
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordModalConfig, setPasswordModalConfig] = useState<{
+    title: string;
+    description: string;
+    onSuccess: () => void;
+  }>({
+    title: 'Yönetici Doğrulaması',
+    description: 'Bu işlemi gerçekleştirmek için admin şifresini (Eren9852) girmeniz gerekmektedir.',
+    onSuccess: () => {},
+  });
+
+  // Admin Panel Modal state
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+
+  // Sync theme with HTML class
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY_THEME, theme);
+    } catch (e) {
+      console.error('Failed to save theme', e);
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  // Helper to require admin password before executing an action
+  const requireAdmin = (
+    action: () => void,
+    promptReason: string = 'Bu işlemi gerçekleştirmek için admin şifresini (Eren9852) girmeniz gerekmektedir.',
+    title: string = 'Yönetici Doğrulaması Gerekli'
+  ) => {
+    if (isAdmin) {
+      action();
+      return;
+    }
+
+    setPasswordModalConfig({
+      title,
+      description: promptReason,
+      onSuccess: () => {
+        setIsAdmin(true);
+        try {
+          localStorage.setItem(STORAGE_KEY_ADMIN, 'true');
+        } catch (e) {
+          console.error(e);
+        }
+        action();
+      },
+    });
+    setIsPasswordModalOpen(true);
+  };
+
+  const handleOpenAdminPanel = () => {
+    if (isAdmin) {
+      setIsAdminPanelOpen(true);
+    } else {
+      requireAdmin(
+        () => setIsAdminPanelOpen(true),
+        'Admin paneline giriş yapmak için yönetici şifresini (Eren9852) giriniz.',
+        'Admin Paneli Girişi'
+      );
+    }
+  };
+
+  const handleLogoutAdmin = () => {
+    setIsAdmin(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY_ADMIN);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // Load state from localStorage or fallback
   const [weeks, setWeeks] = useState<WeekData[]>(() => {
     try {
@@ -171,10 +279,10 @@ export default function App() {
     );
   };
 
-  const handleQuickAddTask = (title: string) => {
-    if (!selectedWeek) return;
+  const handleQuickAddTask = (title: string, targetWeekId?: string) => {
+    const targetId = targetWeekId || selectedWeekId;
     const newTask: Task = {
-      id: `task-${Date.now()}`,
+      id: `task-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
       title,
       completed: false,
       day: 'Pazartesi',
@@ -182,9 +290,10 @@ export default function App() {
       priority: 'Orta',
       timeEstimateMinutes: 30,
     };
+
     setWeeks((prev) =>
       prev.map((w) => {
-        if (w.id !== selectedWeek.id) return w;
+        if (w.id !== targetId) return w;
         return {
           ...w,
           tasks: [...w.tasks, newTask],
@@ -283,24 +392,24 @@ export default function App() {
     );
   };
 
-  const handleAddResource = (resource: any) => {
-    if (!selectedWeek) return;
-    const newRes = {
+  const handleAddResource = (resource: Omit<Resource, 'id'>, targetWeekId?: string) => {
+    const targetId = targetWeekId || selectedWeekId;
+    const newRes: Resource = {
       ...resource,
-      id: `res-${Date.now()}`,
+      id: `res-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
     };
     setWeeks((prev) =>
       prev.map((w) =>
-        w.id === selectedWeek.id ? { ...w, resources: [...w.resources, newRes] } : w
+        w.id === targetId ? { ...w, resources: [...w.resources, newRes] } : w
       )
     );
   };
 
-  const handleDeleteResource = (resourceId: string) => {
-    if (!selectedWeek) return;
+  const handleDeleteResource = (resourceId: string, targetWeekId?: string) => {
+    const targetId = targetWeekId || selectedWeekId;
     setWeeks((prev) =>
       prev.map((w) =>
-        w.id === selectedWeek.id
+        w.id === targetId
           ? { ...w, resources: w.resources.filter((r) => r.id !== resourceId) }
           : w
       )
@@ -340,7 +449,7 @@ export default function App() {
   const highestWeekNumber = weeks.reduce((max, w) => Math.max(max, w.weekNumber), 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans antialiased">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans antialiased transition-colors duration-200">
       {/* Left Sidebar with all weeks (1. Hafta, 2. Hafta, ...) */}
       <Sidebar
         weeks={weeks}
@@ -352,20 +461,42 @@ export default function App() {
           }
         }}
         onAddWeek={() => {
-          setEditingWeek(null);
-          setIsWeekModalOpen(true);
+          requireAdmin(
+            () => {
+              setEditingWeek(null);
+              setIsWeekModalOpen(true);
+            },
+            'Yeni hafta eklemek için yönetici şifresini (Eren9852) girin.',
+            'Yeni Hafta - Yönetici Doğrulaması'
+          );
         }}
         onEditWeek={(w) => {
-          setEditingWeek(w);
-          setIsWeekModalOpen(true);
+          requireAdmin(
+            () => {
+              setEditingWeek(w);
+              setIsWeekModalOpen(true);
+            },
+            'Haftayı düzenlemek için yönetici şifresini (Eren9852) girin.',
+            'Hafta Düzenleme'
+          );
         }}
-        onDeleteWeek={handleDeleteWeek}
+        onDeleteWeek={(weekId) => {
+          requireAdmin(
+            () => handleDeleteWeek(weekId),
+            'Haftayı silmek için yönetici şifresini girin.',
+            'Hafta Silme'
+          );
+        }}
         user={user}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenSettings={() => setIsProfileModalOpen(true)}
         isOpenMobile={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        isAdmin={isAdmin}
+        onOpenAdminPanel={handleOpenAdminPanel}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Main Content Area (offset by left sidebar on desktop) */}
@@ -383,6 +514,10 @@ export default function App() {
           onOpenSettings={() => setIsProfileModalOpen(true)}
           currentWeek={selectedWeek}
           userName={user.name}
+          isAdmin={isAdmin}
+          onOpenAdminPanel={handleOpenAdminPanel}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
 
         {/* Main Body */}
@@ -419,6 +554,8 @@ export default function App() {
               onDeleteTask={handleDeleteTask}
               onQuickAddTask={handleQuickAddTask}
               onUpdateDriveUrl={(url) => handleUpdateDriveUrl(selectedWeek.id, url)}
+              isAdmin={isAdmin}
+              onRequireAdmin={requireAdmin}
             />
           )}
 
@@ -447,6 +584,8 @@ export default function App() {
               onAddResource={handleAddResource}
               onDeleteResource={handleDeleteResource}
               onUpdateDriveUrl={(url) => handleUpdateDriveUrl(selectedWeek.id, url)}
+              isAdmin={isAdmin}
+              onRequireAdmin={requireAdmin}
             />
           )}
 
@@ -467,24 +606,54 @@ export default function App() {
           )}
         </main>
 
-        {/* Light Theme Footer */}
-        <footer className="border-t border-slate-200 bg-white py-6 mt-12 no-print">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        {/* Footer */}
+        <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 mt-12 no-print transition-colors">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
             <div>
-              <span className="font-semibold text-slate-900">{user.name}</span>
-              <span aria-hidden="true" className="mx-2 text-slate-300">·</span>
+              <span className="font-semibold text-slate-900 dark:text-slate-100">{user.name}</span>
+              <span aria-hidden="true" className="mx-2 text-slate-300 dark:text-slate-700">·</span>
               <span>Haftalık Çalışma ve İlerleme Sistemi</span>
             </div>
             <div className="flex items-center gap-3">
               <span>{weeks.length} Hafta Kayıtlı</span>
-              <span aria-hidden="true" className="text-slate-300">·</span>
+              <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
               <span className="font-mono tabular-nums">{completedTasks} Görev Tamamlandı</span>
+              <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
+              <button
+                onClick={handleOpenAdminPanel}
+                className="font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+              >
+                {isAdmin ? 'Admin Paneli (Açık)' : 'Admin Girişi'}
+              </button>
             </div>
           </div>
         </footer>
       </div>
 
-      {/* Modals */}
+      {/* Admin Password Prompt Modal */}
+      <AdminPasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        onSuccess={passwordModalConfig.onSuccess}
+        title={passwordModalConfig.title}
+        description={passwordModalConfig.description}
+      />
+
+      {/* Admin Management Panel Modal */}
+      <AdminPanelModal
+        isOpen={isAdminPanelOpen}
+        onClose={() => setIsAdminPanelOpen(false)}
+        weeks={weeks}
+        onUpdateDriveUrl={handleUpdateDriveUrl}
+        onAddResource={(weekId, res) => handleAddResource(res, weekId)}
+        onDeleteResource={(weekId, resId) => handleDeleteResource(resId, weekId)}
+        onQuickAddTaskToWeek={(weekId, taskTitle) => handleQuickAddTask(taskTitle, weekId)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onLogoutAdmin={handleLogoutAdmin}
+      />
+
+      {/* Other Modals */}
       {selectedWeek && (
         <TaskModal
           isOpen={isTaskModalOpen}

@@ -48,12 +48,12 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
             Gelişim ve İlerleme Raporu
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {user.name} için haftalık hedeflerin genel durum analizi ve metrikler.
           </p>
         </div>
@@ -61,14 +61,14 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={onExportData}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
           >
             <Download className="w-3.5 h-3.5 text-slate-400" />
             <span>Veriyi İndir (JSON)</span>
           </button>
           <button
             onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
           >
             <Printer className="w-3.5 h-3.5 text-slate-400" />
             <span>Yazdır / PDF</span>
@@ -78,66 +78,66 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
 
       {/* Top 4 KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-2xs transition-colors">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Genel Tamamlanma</span>
           </div>
-          <div className="text-2xl font-bold text-slate-900 font-mono tabular-nums">
+          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono tabular-nums">
             %{overallPercentage}
           </div>
-          <div className="text-xs text-slate-400 font-mono tabular-nums mt-1">
+          <div className="text-xs text-slate-400 dark:text-slate-500 font-mono tabular-nums mt-1">
             {completedTasks} / {totalTasks} görev
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <Calendar className="w-4 h-4 text-blue-600" />
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-2xs transition-colors">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <span>Hafta Durumu</span>
           </div>
-          <div className="text-2xl font-bold text-slate-900 font-mono tabular-nums">
+          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono tabular-nums">
             {completedWeeks} / {weeks.length}
           </div>
-          <div className="text-xs text-slate-500 mt-1">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             {inProgressWeeks} hafta şu an devam ediyor
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <Clock className="w-4 h-4 text-sky-600" />
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-2xs transition-colors">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
             <span>Toplam Odak Süresi</span>
           </div>
-          <div className="text-2xl font-bold text-slate-900 font-mono tabular-nums">
-            {totalHours} <span className="text-sm font-normal text-slate-500">saat</span>
+          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono tabular-nums">
+            {totalHours} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">saat</span>
           </div>
-          <div className="text-xs text-slate-400 font-mono tabular-nums mt-1">
+          <div className="text-xs text-slate-400 dark:text-slate-500 font-mono tabular-nums mt-1">
             {totalMinutes} net çalışma dakikası
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-            <BarChart3 className="w-4 h-4 text-purple-600" />
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-2xs transition-colors">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <BarChart3 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             <span>Ortalama Verim</span>
           </div>
-          <div className="text-2xl font-bold text-slate-900 font-mono tabular-nums">
+          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono tabular-nums">
             {(
               weeks.reduce((acc, w) => acc + (w.rating || 0), 0) /
               (weeks.filter((w) => w.rating).length || 1)
             ).toFixed(1)}{' '}
-            <span className="text-sm font-normal text-slate-500">/ 5</span>
+            <span className="text-sm font-normal text-slate-500 dark:text-slate-400">/ 5</span>
           </div>
-          <div className="text-xs text-slate-500 mt-1">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Haftalık değerlendirmeler
           </div>
         </div>
       </div>
 
       {/* Week by Week Progress Breakdown */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4 shadow-2xs">
-        <h3 className="text-sm font-bold text-slate-900">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4 shadow-2xs transition-colors">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
           Haftalık Tamamlanma Grafiği
         </h3>
 
@@ -151,21 +151,21 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
               <div key={week.id} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-blue-900 w-16 font-mono">{week.weekNumber}. Hafta</span>
-                    <span className="text-slate-800 font-medium truncate max-w-xs sm:max-w-md">
+                    <span className="font-bold text-blue-900 dark:text-blue-300 w-16 font-mono">{week.weekNumber}. Hafta</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-xs sm:max-w-md">
                       {week.title}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 font-mono tabular-nums text-slate-500">
+                  <div className="flex items-center gap-3 font-mono tabular-nums text-slate-500 dark:text-slate-400">
                     <span>{wDone}/{wTasks} Görev</span>
-                    <span className="font-semibold text-slate-800 w-10 text-right">%{wPct}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 w-10 text-right">%{wPct}</span>
                   </div>
                 </div>
 
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
                     className={`h-full transition-all duration-300 ${
-                      wPct === 100 ? 'bg-emerald-500' : 'bg-blue-600'
+                      wPct === 100 ? 'bg-emerald-500' : 'bg-blue-600 dark:bg-blue-500'
                     }`}
                     style={{ width: `${wPct}%` }}
                   />
@@ -177,8 +177,8 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
       </div>
 
       {/* Category Breakdown */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4 shadow-2xs">
-        <h3 className="text-sm font-bold text-slate-900">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4 shadow-2xs transition-colors">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
           Kategori Dağılımı ve Başarı Oranları
         </h3>
 
@@ -186,15 +186,15 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
           {Object.entries(categoryCounts).map(([cat, counts]) => {
             const catPct = counts.total > 0 ? Math.round((counts.completed / counts.total) * 100) : 0;
             return (
-              <div key={cat} className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <div key={cat} className="p-3.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg">
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="font-semibold text-slate-800">{cat}</span>
-                  <span className="font-mono tabular-nums font-bold text-blue-900">%{catPct}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{cat}</span>
+                  <span className="font-mono tabular-nums font-bold text-blue-900 dark:text-blue-300">%{catPct}</span>
                 </div>
-                <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mb-2">
-                  <div className="h-full bg-blue-600" style={{ width: `${catPct}%` }} />
+                <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mb-2">
+                  <div className="h-full bg-blue-600 dark:bg-blue-500" style={{ width: `${catPct}%` }} />
                 </div>
-                <div className="text-[11px] text-slate-500 font-mono tabular-nums flex justify-between">
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono tabular-nums flex justify-between">
                   <span>{counts.completed} tamamlandı</span>
                   <span>{counts.total} toplam</span>
                 </div>
@@ -205,7 +205,7 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
       </div>
 
       {/* Reset Data Warning Box */}
-      <div className="pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+      <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <span>Tüm veriler tarayıcınızın yerel hafızasında (localStorage) saklanır.</span>
         <button
           onClick={() => {
@@ -213,7 +213,7 @@ export const ProgressStats: React.FC<ProgressStatsProps> = ({
               onResetData();
             }
           }}
-          className="flex items-center gap-1 text-slate-500 hover:text-rose-600 transition-colors cursor-pointer"
+          className="flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Başlangıç Verilerine Dön</span>
