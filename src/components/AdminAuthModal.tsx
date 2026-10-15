@@ -9,7 +9,7 @@ interface AdminAuthModalProps {
   description?: string;
 }
 
-export const ADMIN_PASSWORD = 'Eren9852';
+export const ADMIN_PASSWORD = 'Eren985253';
 
 export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
   isOpen,
@@ -63,7 +63,7 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-              <p className="text-[11px] text-slate-500 font-mono">Şifre: Eren9852</p>
+              <p className="text-[11px] text-slate-500 font-mono">Şifre gereklidir.</p>
             </div>
           </div>
           <button

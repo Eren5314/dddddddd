@@ -74,7 +74,7 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
           onQuickAddTask(taskTitleToAdd);
           setQuickInput('');
         },
-        `${week.weekNumber}. Hafta için hızlı görev eklemek üzere yönetici şifresini (Eren9852) girin.`,
+        `${week.weekNumber}. Hafta için hızlı görev eklemek üzere yönetici şifresini girin.`,
         'Hızlı Görev Ekleme - Yönetici Doğrulaması'
       );
     } else {
@@ -87,7 +87,7 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
     if (onRequireAdmin && !isAdmin) {
       onRequireAdmin(
         onAddTask,
-        `${week.weekNumber}. Haftaya yeni görev eklemek için yönetici şifresini (Eren9852) girin.`,
+        `${week.weekNumber}. Haftaya yeni görev eklemek için yönetici şifresini girin.`,
         'Görev Ekleme - Yönetici Doğrulaması'
       );
     } else {
@@ -105,7 +105,7 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
     if (onRequireAdmin && !isAdmin) {
       onRequireAdmin(
         doDelete,
-        `Görev Silme Koruması: "${task.title}" görevini silmek için yönetici şifresini (Eren9852) girmeniz gerekmektedir. Eklenen görevler varsayılan olarak silinmeye karşı korunur.`,
+        `Görev Silme Koruması: "${task.title}" görevini silmek için yönetici şifresini girmeniz gerekmektedir. Eklenen görevler varsayılan olarak silinmeye karşı korunur.`,
         'Görev Silme Koruması'
       );
     } else {
@@ -411,7 +411,7 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
             {!isAdmin ? (
               <span
                 className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md"
-                title="Şifre ile korumalı (Eren9852)"
+                title="Şifre ile korumalı"
               >
                 <Lock className="w-3 h-3 text-amber-500" />
                 <span>Admin Şifreli</span>

@@ -55,7 +55,7 @@ export default function App() {
     onSuccess: () => void;
   }>({
     title: 'Yönetici Doğrulaması',
-    description: 'Bu işlemi gerçekleştirmek için admin şifresini (Eren9852) girmeniz gerekmektedir.',
+    description: 'Bu işlemi gerçekleştirmek için admin şifresini girmeniz gerekmektedir.',
     onSuccess: () => {},
   });
 
@@ -83,7 +83,7 @@ export default function App() {
   // Helper to require admin password before executing an action
   const requireAdmin = (
     action: () => void,
-    promptReason: string = 'Bu işlemi gerçekleştirmek için admin şifresini (Eren9852) girmeniz gerekmektedir.',
+    promptReason: string = 'Bu işlemi gerçekleştirmek için admin şifresini girmeniz gerekmektedir.',
     title: string = 'Yönetici Doğrulaması Gerekli'
   ) => {
     if (isAdmin) {
@@ -113,7 +113,7 @@ export default function App() {
     } else {
       requireAdmin(
         () => setIsAdminPanelOpen(true),
-        'Admin paneline giriş yapmak için yönetici şifresini (Eren9852) giriniz.',
+        'Admin paneline giriş yapmak için yönetici şifresini giriniz.',
         'Admin Paneli Girişi'
       );
     }
@@ -521,7 +521,7 @@ export default function App() {
               setEditingWeek(null);
               setIsWeekModalOpen(true);
             },
-            'Yeni hafta eklemek için yönetici şifresini (Eren9852) girin.',
+            'Yeni hafta eklemek için yönetici şifresini girin.',
             'Yeni Hafta - Yönetici Doğrulaması'
           );
         }}
@@ -531,7 +531,7 @@ export default function App() {
               setEditingWeek(w);
               setIsWeekModalOpen(true);
             },
-            'Haftayı düzenlemek için yönetici şifresini (Eren9852) girin.',
+            'Haftayı düzenlemek için yönetici şifresini girin.',
             'Hafta Düzenleme'
           );
         }}

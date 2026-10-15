@@ -74,7 +74,7 @@ export const WeeklyNotesAndResources: React.FC<WeeklyNotesAndResourcesProps> = (
     if (onRequireAdmin && !isAdmin) {
       onRequireAdmin(
         () => setShowResourceForm(true),
-        'Haftaya yeni bağlantı veya kaynak eklemek için yönetici şifresini (Eren9852) girin.',
+        'Haftaya yeni bağlantı veya kaynak eklemek için yönetici şifresini girin.',
         'Kaynak Ekleme - Yönetici Doğrulaması'
       );
     } else {

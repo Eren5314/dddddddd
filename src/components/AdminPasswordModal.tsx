@@ -9,7 +9,7 @@ interface AdminPasswordModalProps {
   description?: string;
 }
 
-export const ADMIN_PASSWORD = 'Eren9852';
+export const ADMIN_PASSWORD = 'Eren985253';
 
 export const AdminPasswordModal: React.FC<AdminPasswordModalProps> = ({
   isOpen,

@@ -589,7 +589,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
                   Yönetici Şifre Güvenliği
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Admin paneli ve korumalı alanlar (1. Hafta hızlı görev ekleme ve link ekleme işlemleri) <span className="font-mono font-bold text-blue-600 dark:text-blue-400">Eren9852</span> şifresi ile korunmaktadır.
+                  Admin paneli ve korumalı alanlar (1. Hafta hızlı görev ekleme ve link ekleme işlemleri) yönetici şifresi ile korunmaktadır.
                 </p>
 
                 <div className="pt-2">
@@ -611,7 +611,7 @@ export const AdminPanelModal: React.FC<AdminPanelModalProps> = ({
 
         {/* Footer */}
         <div className="p-4 border-t border-slate-150 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-          <span>Şifre: <strong className="font-mono text-slate-800 dark:text-slate-200">Eren9852</strong></span>
+          <span>Şifre ile korumalı</span>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl transition-colors cursor-pointer"
