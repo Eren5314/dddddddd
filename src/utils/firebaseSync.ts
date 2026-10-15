@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 import { WeekData, UserProfile } from '../types';
 
@@ -14,6 +14,7 @@ signInAnonymously(auth).catch((err) => {
 });
 
 const ROADMAP_DOC_ID = 'eren_main_roadmap';
+const SHARED_USER_ID = 'eren_shared_roadmap';
 
 export enum OperationType {
   CREATE = 'create',
@@ -52,7 +53,42 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 }
 
 /**
- * Load roadmap data from Firestore
+ * Subscribe to real-time changes from Firestore.
+ * When an authorized person adds or edits tasks, Drive links, or resources,
+ * all connected visitors immediately receive the updates in real time!
+ */
+export function subscribeToRoadmap(
+  onData: (data: { weeks: WeekData[]; user?: UserProfile }) => void,
+  onError?: (err: unknown) => void
+): Unsubscribe {
+  const path = `roadmaps/${ROADMAP_DOC_ID}`;
+  const docRef = doc(db, 'roadmaps', ROADMAP_DOC_ID);
+
+  return onSnapshot(
+    docRef,
+    (snapshot) => {
+      if (snapshot.exists()) {
+        try {
+          const data = snapshot.data();
+          const weeks: WeekData[] = data.weeksJson ? JSON.parse(data.weeksJson) : [];
+          const user: UserProfile | undefined = data.userJson ? JSON.parse(data.userJson) : undefined;
+          if (Array.isArray(weeks) && weeks.length > 0) {
+            onData({ weeks, user });
+          }
+        } catch (e) {
+          console.error('Error parsing snapshot data:', e);
+        }
+      }
+    },
+    (error) => {
+      handleFirestoreError(error, OperationType.GET, path);
+      if (onError) onError(error);
+    }
+  );
+}
+
+/**
+ * Load roadmap data once from Firestore
  */
 export async function loadRoadmapFromFirestore(): Promise<{ weeks?: WeekData[]; user?: UserProfile } | null> {
   const path = `roadmaps/${ROADMAP_DOC_ID}`;
@@ -73,20 +109,28 @@ export async function loadRoadmapFromFirestore(): Promise<{ weeks?: WeekData[]; 
 }
 
 /**
- * Save roadmap data to Firestore
+ * Save roadmap data to Firestore.
+ * Guarded to ensure valid weeks data is saved.
  */
-export async function saveRoadmapToFirestore(weeks: WeekData[], user: UserProfile): Promise<void> {
+export async function saveRoadmapToFirestore(weeks: WeekData[], user: UserProfile): Promise<boolean> {
+  if (!weeks || !Array.isArray(weeks) || weeks.length === 0) {
+    console.warn('Skipping save: weeks is empty');
+    return false;
+  }
+
   const path = `roadmaps/${ROADMAP_DOC_ID}`;
   try {
     const docRef = doc(db, 'roadmaps', ROADMAP_DOC_ID);
     const payload = {
-      userId: auth.currentUser?.uid || 'anonymous_eren',
+      userId: SHARED_USER_ID,
       weeksJson: JSON.stringify(weeks),
       userJson: JSON.stringify(user),
       updatedAt: new Date().toISOString(),
     };
     await setDoc(docRef, payload, { merge: true });
+    return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
+    return false;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { WeekData, Task, UserProfile, DayOfWeek, WeekStatus, Resource } from './types';
 import { initialWeeks, initialUserProfile } from './data/initialData';
 import { Sidebar } from './components/Sidebar';
@@ -14,7 +14,7 @@ import { WeekModal } from './components/WeekModal';
 import { ProfileModal } from './components/ProfileModal';
 import { AdminPasswordModal, ADMIN_PASSWORD } from './components/AdminPasswordModal';
 import { AdminPanelModal } from './components/AdminPanelModal';
-import { loadRoadmapFromFirestore, saveRoadmapToFirestore } from './utils/firebaseSync';
+import { subscribeToRoadmap, loadRoadmapFromFirestore, saveRoadmapToFirestore } from './utils/firebaseSync';
 
 const STORAGE_KEY_WEEKS = 'eren_roadmap_weeks_v4';
 const STORAGE_KEY_USER = 'eren_roadmap_user_v4';
@@ -179,30 +179,74 @@ export default function App() {
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  // Load data from Firebase Firestore on mount
+  const [isFirebaseReady, setIsFirebaseReady] = useState(false);
+  const isRemoteUpdateRef = useRef(false);
+
+  // Real-time live synchronization with Firebase Firestore
+  // When an authorized person adds or edits tasks, Drive links, or resources,
+  // all clients across all devices receive the updates immediately without refreshing!
   useEffect(() => {
-    loadRoadmapFromFirestore().then((res) => {
-      if (res) {
-        if (res.weeks && Array.isArray(res.weeks) && res.weeks.length > 0) {
-          setWeeks(res.weeks);
+    let isMounted = true;
+
+    const unsubscribe = subscribeToRoadmap(
+      ({ weeks: remoteWeeks, user: remoteUser }) => {
+        if (!isMounted) return;
+        isRemoteUpdateRef.current = true;
+        if (remoteWeeks && remoteWeeks.length > 0) {
+          setWeeks(remoteWeeks);
+          try {
+            localStorage.setItem(STORAGE_KEY_WEEKS, JSON.stringify(remoteWeeks));
+          } catch (e) {
+            console.error(e);
+          }
         }
-        if (res.user) {
-          setUser((prev) => ({ ...prev, ...res.user }));
+        if (remoteUser) {
+          setUser((prev) => ({ ...prev, ...remoteUser }));
+          try {
+            localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(remoteUser));
+          } catch (e) {
+            console.error(e);
+          }
         }
+        setIsFirebaseReady(true);
+        setTimeout(() => {
+          isRemoteUpdateRef.current = false;
+        }, 300);
+      },
+      (error) => {
+        console.warn('Real-time sync error, falling back to local storage:', error);
+        setIsFirebaseReady(true);
+      }
+    );
+
+    // Initial check: if no remote document exists yet, mark as ready so admin can seed it
+    loadRoadmapFromFirestore().then((initial) => {
+      if (!isMounted) return;
+      if (!initial) {
+        setIsFirebaseReady(true);
       }
     });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   // Sync to localStorage and Firebase Firestore
+  // Guaranteed not to wipe Firestore with empty or uninitialized local state
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_WEEKS, JSON.stringify(weeks));
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
-      saveRoadmapToFirestore(weeks, user);
     } catch (e) {
-      console.error('Failed to save weeks or user', e);
+      console.error('Failed to save to localStorage', e);
     }
-  }, [weeks, user]);
+
+    if (isFirebaseReady && !isRemoteUpdateRef.current && weeks.length > 0) {
+      saveRoadmapToFirestore(weeks, user);
+    }
+  }, [weeks, user, isFirebaseReady]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_SELECTED_WEEK, selectedWeekId);

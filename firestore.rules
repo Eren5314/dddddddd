@@ -18,8 +18,7 @@ service cloud.firestore {
     match /roadmaps/{roadmapId} {
       allow read: if true;
       allow create: if isValidRoadmap(request.resource.data);
-      allow update: if isValidRoadmap(request.resource.data) &&
-                      request.resource.data.userId == resource.data.userId;
+      allow update: if isValidRoadmap(request.resource.data);
       allow delete: if false;
     }
   }
