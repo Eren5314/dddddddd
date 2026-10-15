@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidRoadmap(data) {
+      return data.keys().hasAll(['userId', 'weeksJson', 'updatedAt']) &&
+             data.keys().hasOnly(['userId', 'weeksJson', 'userJson', 'updatedAt']) &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.weeksJson is string && data.weeksJson.size() <= 1048576 &&
+             data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    match /roadmaps/{roadmapId} {
+      allow read: if true;
+      allow create: if isValidRoadmap(request.resource.data);
+      allow update: if isValidRoadmap(request.resource.data) &&
+                      request.resource.data.userId == resource.data.userId;
+      allow delete: if false;
+    }
+  }
+}

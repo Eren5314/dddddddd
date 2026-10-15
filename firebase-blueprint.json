@@ -1,0 +1,37 @@
+{
+  "entities": {
+    "RoadmapData": {
+      "title": "Roadmap Data",
+      "description": "Eren's weekly roadmap data including weeks, tasks, resources, and user profile",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner user identifier",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "weeksJson": {
+          "type": "string",
+          "description": "JSON serialized weeks array"
+        },
+        "userJson": {
+          "type": "string",
+          "description": "JSON serialized user profile object"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["userId", "weeksJson", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/roadmaps/{roadmapId}": {
+      "schema": "RoadmapData",
+      "description": "Main roadmap storage document for persistent cross-session data"
+    }
+  }
+}

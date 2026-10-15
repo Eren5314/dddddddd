@@ -14,6 +14,7 @@ import { WeekModal } from './components/WeekModal';
 import { ProfileModal } from './components/ProfileModal';
 import { AdminPasswordModal, ADMIN_PASSWORD } from './components/AdminPasswordModal';
 import { AdminPanelModal } from './components/AdminPanelModal';
+import { loadRoadmapFromFirestore, saveRoadmapToFirestore } from './utils/firebaseSync';
 
 const STORAGE_KEY_WEEKS = 'eren_roadmap_weeks_v4';
 const STORAGE_KEY_USER = 'eren_roadmap_user_v4';
@@ -178,22 +179,30 @@ export default function App() {
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  // Sync to localStorage
+  // Load data from Firebase Firestore on mount
+  useEffect(() => {
+    loadRoadmapFromFirestore().then((res) => {
+      if (res) {
+        if (res.weeks && Array.isArray(res.weeks) && res.weeks.length > 0) {
+          setWeeks(res.weeks);
+        }
+        if (res.user) {
+          setUser((prev) => ({ ...prev, ...res.user }));
+        }
+      }
+    });
+  }, []);
+
+  // Sync to localStorage and Firebase Firestore
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_WEEKS, JSON.stringify(weeks));
-    } catch (e) {
-      console.error('Failed to save weeks', e);
-    }
-  }, [weeks]);
-
-  useEffect(() => {
-    try {
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
+      saveRoadmapToFirestore(weeks, user);
     } catch (e) {
-      console.error('Failed to save user', e);
+      console.error('Failed to save weeks or user', e);
     }
-  }, [user]);
+  }, [weeks, user]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_SELECTED_WEEK, selectedWeekId);
