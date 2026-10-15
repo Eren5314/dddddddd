@@ -8,10 +8,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 
-// Sign in anonymously on boot so we have an authenticated context if required
-signInAnonymously(auth).catch((err) => {
-  console.error('Firebase anonymous auth error:', err);
-});
+// Removed forced anonymous sign-in at boot
 
 const ROADMAP_DOC_ID = 'eren_main_roadmap';
 const SHARED_USER_ID = 'eren_shared_roadmap';

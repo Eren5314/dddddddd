@@ -8,8 +8,8 @@ export const initialUserProfile: UserProfile = {
   bannerUrl: '/src/assets/images/eren_workspace_banner_1790237175348.jpg',
 };
 
-// Generates clean empty weeks for Eren (from 1 to 20) with no pre-filled tasks
-export const initialWeeks: WeekData[] = Array.from({ length: 20 }, (_, index) => {
+// Generates clean empty weeks for Eren (from 1 to 40) with no pre-filled tasks
+export const initialWeeks: WeekData[] = Array.from({ length: 40 }, (_, index) => {
   const weekNum = index + 1;
   return {
     id: `week-${weekNum}`,
